@@ -924,7 +924,15 @@ Form.Field = (function() {
     clearError: function() {
       var errClass = Form.classNames.error;
 
-      this.$el.removeClass(errClass);
+      // Close.io HACK -- adding this hasClass 'if' condition around the removeClass call fixes 
+      // a weird bug on Windows + Chrome where while drafting an email message and having the 
+      // template <select> chooser open, the selected item would keep jumping to a different one
+      // than your mouse was on. This is because every 1s our autosave feature calls form.validate()
+      // which calls field.validate() which calls this. No idea why calling 'removeClass' on the 
+      // <select>'s grandparent element would cause a different <option> to be selected though :/
+      if (this.$el.hasClass(errClass)) {
+          this.$el.removeClass(errClass);
+      }
 
       // some fields (e.g., Hidden), may not have a help el
       if (this.$error) {
