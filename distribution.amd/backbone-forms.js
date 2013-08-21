@@ -11,6 +11,7 @@
  * http://github.com/powmedia/backbone-forms
  */
 define(['jquery', 'underscore', 'backbone'], function($, _, Backbone) {
+    'use strict';
 
   //==================================================================================================
 //FORM
@@ -177,6 +178,9 @@ var Form = Backbone.View.extend({
         fields = this.fields;
 
     //Render form
+    if (_.isString(this.template)) {
+        this.template = _.template(this.template);
+    }
     var $form = $($.trim(this.template(_.result(this, 'templateData'))));
 
     //Render standalone editors
@@ -445,7 +449,7 @@ var Form = Backbone.View.extend({
   //STATICS
   template: _.template('\
     <form data-fieldsets></form>\
-  ', null, this.templateSettings),
+  ', null),
 
   templateSettings: {
     evaluate: /<%([\s\S]+?)%>/g, 
@@ -836,6 +840,9 @@ Form.Field = Backbone.View.extend({
     }
 
     //Render field
+    if (_.isString(this.template)) {
+        this.template = _.template(this.template);
+    }
     var $field = $($.trim(this.template(_.result(this, 'templateData'))));
 
     if (schema.fieldClass) $field.addClass(schema.fieldClass);
@@ -954,7 +961,7 @@ Form.Field = Backbone.View.extend({
   //STATICS
 
   template: _.template('\
-    <div>\
+    <div class="bbf-field field-<%= key %>">\
       <label for="<%= editorId %>"><%= title %></label>\
       <div>\
         <span data-editor></span>\
